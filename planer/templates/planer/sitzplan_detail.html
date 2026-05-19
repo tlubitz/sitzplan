@@ -1,0 +1,42 @@
+{% extends "planer/base.html" %}
+{% block title %}Sitzplan – {{ sitzplan.klasse.name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1>Sitzplan – {{ sitzplan.klasse.name }}</h1>
+    <p class="text-muted mb-0">{{ sitzplan.created_at|date:"d.m.Y H:i" }}</p>
+  </div>
+  <div>
+    <a href="{% url 'klasse_detail' sitzplan.klasse.pk %}" class="btn btn-outline-secondary">← Zurück zur Klasse</a>
+    <a href="{% url 'sitzplan_delete' sitzplan.pk %}" class="btn btn-outline-danger ms-2">Löschen</a>
+  </div>
+</div>
+
+{% if sitzplan.status == 'solved' %}
+  <div class="alert alert-success">
+    Gesamtglück: <strong>{{ sitzplan.gesamt_glueck|floatformat:0 }}</strong>
+  </div>
+
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for tisch, schuelerinnen in tische_map.items %}
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-header d-flex justify-content-between">
+            <strong>{{ tisch.name }}</strong>
+            <span class="badge bg-secondary">{{ tisch.kapazitaet }} Plätze</span>
+          </div>
+          <ul class="list-group list-group-flush">
+            {% for s in schuelerinnen %}
+              <li class="list-group-item">{{ s.name }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+{% else %}
+  <div class="alert alert-warning">Keine Lösung gefunden. Bitte Bedingungen überprüfen.</div>
+{% endif %}
+{% endblock %}

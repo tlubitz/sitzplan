@@ -1,0 +1,140 @@
+{% extends "planer/base.html" %}
+{% block title %}{{ klasse.name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1>{{ klasse.name }}</h1>
+  <div>
+    <form method="post" action="{% url 'sitzplan_berechnen' klasse.pk %}" class="d-inline">
+      {% csrf_token %}
+      <button class="btn btn-success">⚙️ Sitzplan berechnen</button>
+    </form>
+    <a href="{% url 'klasse_delete' klasse.pk %}" class="btn btn-outline-danger ms-2">Klasse löschen</a>
+  </div>
+</div>
+
+<div class="row g-4">
+
+  <!-- Schüler*innen -->
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-header d-flex justify-content-between">
+        <strong>Schüler*innen ({{ schuelerinnen.count }})</strong>
+        <a href="{% url 'schuelerIn_add' klasse.pk %}" class="btn btn-sm btn-outline-primary">+ Hinzufügen</a>
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for s in schuelerinnen %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ s.name }}
+            <a href="{% url 'schuelerIn_delete' klasse.pk s.pk %}" class="btn btn-sm btn-outline-danger py-0">✕</a>
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted">Keine Schüler*innen</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Tische -->
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-header d-flex justify-content-between">
+        <strong>Tische ({{ tische.count }})</strong>
+        <a href="{% url 'tisch_add' klasse.pk %}" class="btn btn-sm btn-outline-primary">+ Hinzufügen</a>
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for t in tische %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ t.name }} <span class="badge bg-secondary">{{ t.kapazitaet }} Plätze</span>
+            <a href="{% url 'tisch_delete' klasse.pk t.pk %}" class="btn btn-sm btn-outline-danger py-0">✕</a>
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted">Keine Tische</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Vorlieben -->
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-header d-flex justify-content-between">
+        <strong>Vorlieben ({{ vorlieben.count }})</strong>
+        <a href="{% url 'vorliebe_add' klasse.pk %}" class="btn btn-sm btn-outline-primary">+ Hinzufügen</a>
+      </div>
+      <ul class="list-group list-group-flush" style="max-height:300px;overflow-y:auto">
+        {% for v in vorlieben %}
+          <li class="list-group-item d-flex justify-content-between align-items-center small">
+            {{ v.schuelerIn_a.name }} ↔ {{ v.schuelerIn_b.name }}
+            <span class="badge {% if v.score > 0 %}bg-success{% else %}bg-danger{% endif %}">{{ v.score }}</span>
+            <a href="{% url 'vorliebe_delete' klasse.pk v.pk %}" class="btn btn-sm btn-outline-danger py-0">✕</a>
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted small">Keine Vorlieben</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Verboten -->
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-header d-flex justify-content-between">
+        <strong>Verbotene Kombinationen ({{ verboten.count }})</strong>
+        <a href="{% url 'verboten_add' klasse.pk %}" class="btn btn-sm btn-outline-danger">+ Hinzufügen</a>
+      </div>
+      <ul class="list-group list-group-flush" style="max-height:300px;overflow-y:auto">
+        {% for v in verboten %}
+          <li class="list-group-item d-flex justify-content-between align-items-center small">
+            {{ v.schuelerIn_a.name }} ✗ {{ v.schuelerIn_b.name }}
+            <a href="{% url 'verboten_delete' klasse.pk v.pk %}" class="btn btn-sm btn-outline-danger py-0">✕</a>
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted small">Keine verbotenen Kombinationen</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- TischVorlieben -->
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-header d-flex justify-content-between">
+        <strong>Tischvorlieben ({{ tisch_vorlieben.count }})</strong>
+        <a href="{% url 'tisch_vorliebe_add' klasse.pk %}" class="btn btn-sm btn-outline-primary">+ Hinzufügen</a>
+      </div>
+      <ul class="list-group list-group-flush" style="max-height:300px;overflow-y:auto">
+        {% for tv in tisch_vorlieben %}
+          <li class="list-group-item d-flex justify-content-between align-items-center small">
+            {{ tv.schuelerIn.name }} @ Kap.{{ tv.kapazitaet }}
+            <span class="badge {% if tv.score > 0 %}bg-success{% else %}bg-danger{% endif %}">{{ tv.score }}</span>
+            <a href="{% url 'tisch_vorliebe_delete' klasse.pk tv.pk %}" class="btn btn-sm btn-outline-danger py-0">✕</a>
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted small">Keine Tischvorlieben</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Sitzpläne -->
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-header"><strong>Letzte Sitzpläne</strong></div>
+      <ul class="list-group list-group-flush">
+        {% for sp in sitzplaene %}
+          <li class="list-group-item d-flex justify-content-between align-items-center small">
+            <a href="{% url 'sitzplan_detail' sp.pk %}">{{ sp.created_at|date:"d.m.Y H:i" }}</a>
+            <span class="badge {% if sp.status == 'solved' %}bg-success{% else %}bg-warning text-dark{% endif %}">
+              {% if sp.status == 'solved' %}{{ sp.gesamt_glueck|floatformat:0 }}{% else %}{{ sp.status }}{% endif %}
+            </span>
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted small">Noch keine Sitzpläne</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
