@@ -95,7 +95,6 @@ for schuelerIn in schuelerInnen:
     for tisch in tische:
         x[(schuelerIn, tisch)] = model.NewBoolVar(f"x_{schuelerIn}_{tisch}")
 
-
 # Constraints/Bedingungen
 for schuelerIn in schuelerInnen:
     model.Add(
