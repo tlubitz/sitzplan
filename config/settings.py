@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-tgr$8kadjoj*mymr*a44@@7)@gc8((iv@skpeqo3-pi&9ms)s@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['127.0.0.1', 'https://sitzplan-production.up.railway.app']
 
 
 # Application definition
