@@ -23,10 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-tgr$8kadjoj*mymr*a44@@7)@gc8((iv@skpeqo3-pi&9ms)s@'
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['127.0.0.1', 'sitzplan-production.up.railway.app']  # 'https://sitzplan-production.up.railway.app']
-
+CSRF_TRUSTED_ORIGINS = ['https://sitzplan-production.up.railway.app']
 
 # Application definition
 
