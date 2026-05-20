@@ -85,7 +85,6 @@ tisch_vorlieben = {
 
 print('Variablen fertig')
 
-
 score = 0
 model = cp_model.CpModel()
 
